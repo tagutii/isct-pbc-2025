@@ -4,6 +4,8 @@
 
 このガイドでは、ペット管理アプリに3つのAI機能を追加します。
 
+**前提条件**: ベースアプリのセットアップと動作確認が完了していること（01-developing-applications-with-AI-integration.mdの「セットアップ手順」まで完了）
+
 ---
 
 ## 実装する機能
@@ -29,15 +31,50 @@ Google Gemini APIは、Googleが提供する最新のマルチモーダルAIモ�
 - **会話**: 文脈を理解した対話が可能
 - **多言語対応**: 日本語を含む100以上の言語に対応
 
+#### 利用可能なモデル
+
+Google Gemini APIには複数のモデルがありますが、本講義では**Gemini 2.5 Flash**を使用します。
+
+##### Gemini 2.5 Flash（本講義で使用・推奨）🏆
+
+**モデル名**: `gemini-2.5-flash`
+
+- ⚡ **最速**: 応答速度が非常に速い（リアルタイム処理に最適）
+- 🎯 **高精度**: 最新の改善により、画像認識・テキスト生成の精度が向上
+- 💰 **低コスト**: 最も安価で無料枠も充実
+- 🖼️ **マルチモーダル**: テキスト、画像、動画、音声すべてに対応
+- 📝 **長文対応**: 最大100万トークン（約75万語）
+
+**無料枠**:
+- 月15 RPM（Requests Per Minute）
+- 月1,500 RPD（Requests Per Day）
+- 実質的に1日100リクエスト以上無料で使える
+
+**なぜ2.5 Flashを選ぶのか？**
+- ✅ 学習に最適な性能とコストバランス
+- ✅ 犬種/猫種識別に十分な精度
+- ✅ チャットボットに最適な応答速度
+- ✅ 無料枠が大きく、練習に最適
+
+##### Gemini 1.5 Pro（参考）
+
+**モデル名**: `gemini-1.5-pro`
+
+- 🧠 **最高性能**: より複雑な推論タスクに対応
+- 📚 **超長文**: 最大200万トークン
+- 💰 **高コスト**: 無料枠が少ない（月2 RPM程度）
+
+**用途**: 複雑な医療診断や詳細な分析が必要な場合のみ使用
+
 #### 料金
 
-- **無料枠**: 月60リクエスト/分まで無料
-- **有料プラン**: 従量課金制（テキスト: $0.00025/1000文字、画像: $0.0025/画像）
+- **無料枠**: 月15 RPM（Gemini 2.5 Flash）
+- **有料プラン**: 従量課金制（詳細はGoogle AI Studioで確認）
 
 #### 本講義での用途
 
-1. **犬種/猫種自動識別**: 画像を分析し、品種を判定
-2. **ヘルスケアアドバイザー**: ペットの健康に関する質問に回答
+1. **犬種/猫種自動識別**: Gemini 2.5 Flashで画像を分析し、品種を判定
+2. **ヘルスケアアドバイザー**: Gemini 2.5 Flashでペットの健康に関する質問に回答
 
 ---
 
@@ -49,19 +86,69 @@ Hugging Faceは、機械学習モデルの共有プラットフォームです�
 
 #### 主な機能
 
-- **画像生成**: テキストから画像を生成（Stable Diffusion など）
-- **テキスト生成**: 大規模言語モデル（LLM）の利用
-- **音声認識**: 音声をテキストに変換
-- **物体検出**: 画像内の物体を検出
+- **画像生成**: テキストから画像を生成（Stable Diffusion、SDXL、FLUX.1 など）
+- **テキスト生成**: 大規模言語モデル（Llama、Mistral など）
+- **音声認識**: 音声をテキストに変換（Whisper など）
+- **物体検出**: 画像内の物体を検出（YOLO など）
+- **画像編集**: 背景除去、高解像度化など
+
+#### 利用可能な画像生成モデル
+
+Hugging Face Inference APIでは、複数の画像生成モデルが利用可能です。本講義では**Stable Diffusion XL Base 1.0**を推奨します。
+
+##### Stable Diffusion XL Base 1.0（推奨）🏆
+
+**モデル名**: `stabilityai/stable-diffusion-xl-base-1.0`
+
+- 🎨 **高品質**: 1024x1024の高解像度画像生成
+- 🎯 **高精度**: プロンプトの理解が向上
+- 📝 **詳細な表現**: より複雑なプロンプトに対応
+- 🆓 **無料**: Inference APIで無料利用可能
+
+**本講義での採用理由**:
+- ✅ 旧版（2.1）より画質が大幅に向上
+- ✅ ペットの特徴をより正確に表現
+- ✅ 無料枠で利用可能
+
+##### Stable Diffusion 2.1（代替オプション）
+
+**モデル名**: `stabilityai/stable-diffusion-2-1`
+
+- ⚡ **高速**: XLより処理が速い
+- 💾 **軽量**: モデルサイズが小さい
+- 📐 **512x512**: 標準解像度
+
+**用途**: 高速な生成が必要な場合や、モデル読み込み待ち時間を避けたい場合
+
+##### FLUX.1 Schnell（最新・高性能）
+
+**モデル名**: `black-forest-labs/FLUX.1-schnell`
+
+- ⭐ **最高品質**: 最新の高性能モデル
+- 🎯 **超高精度**: 写真のようなリアルな画像
+- ⚡ **高速**: schnellは「速い」という意味
+
+**注意**: 無料枠では読み込みに時間がかかる場合があります
 
 #### 料金
 
-- **無料枠**: 完全無料（制限あり: リクエスト数、モデルによる）
-- **Pro プラン**: $9/月（より高速、制限緩和）
+##### 無料枠
+- **完全無料**: APIキーのみで利用可能
+- **制限**:
+  - リクエストレート: 約30リクエスト/分
+  - モデル読み込み: 初回20-30秒（キャッシュされる）
+  - タイムアウト: 60秒
+
+##### Pro プラン（$9/月）
+- **高速**: 優先的に処理される
+- **常時起動**: モデルが常に読み込まれた状態
+- **より多くのリクエスト**: レート制限が緩和
+- **専用エンドポイント**: 安定した性能
 
 #### 本講義での用途
 
 - **子供イメージ画像生成**: 2匹のペットの特徴を組み合わせた画像を生成
+- **推奨モデル**: `stabilityai/stable-diffusion-xl-base-1.0`（高品質かつ無料）
 
 ---
 
@@ -71,12 +158,13 @@ Hugging Faceは、機械学習モデルの共有プラットフォームです�
 
 #### 1. 学習に最適
 
-**Google Gemini API**
+**Google Gemini API（Gemini 2.5 Flash）**
 - ✅ **日本語対応が優れている** - 日本語での質問・回答が自然
-- ✅ **無料枠が充実** - 学習用途なら十分な無料枠
+- ✅ **無料枠が充実** - 学習用途なら十分な無料枠（月1,500リクエスト/日）
 - ✅ **マルチモーダル** - 画像とテキストの両方を1つのAPIで処理可能
 - ✅ **シンプルなAPI** - 初心者でも理解しやすい設計
-- ✅ **高性能** - 最新のAI技術を体験できる
+- ✅ **最新モデル** - Gemini 2.5 Flashで最新のAI技術を体験できる
+- ✅ **高速応答** - リアルタイム処理に最適な速度
 
 **Hugging Face Inference API**
 - ✅ **完全無料** - 学習環境で課金の心配なし
@@ -161,6 +249,8 @@ Hugging Faceは、機械学習モデルの共有プラットフォームです�
 
 ---
 
+**それでは、これらのAPIを使ってAI機能を実装していきましょう！まずは各APIのアクセスキーを取得します。**
+
 ## 事前準備：APIキーの取得
 
 ### Google Gemini API キーの取得
@@ -217,7 +307,11 @@ GOOGLE_GEMINI_API_KEY=ここにGemini APIキーを貼り付け
 HUGGINGFACE_API_KEY=ここにHugging Face APIキーを貼り付け
 ```
 
+**保存したら、必ず開発サーバーを再起動してください**（環境変数の反映のため）。
+
 ---
+
+**準備が整いました！それでは、3つのAI機能を順番に実装していきましょう。**
 
 ## 機能1: 犬種/猫種自動識別
 
@@ -268,7 +362,7 @@ export async function POST(request: NextRequest) {
 
     // Gemini API呼び出し
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
     const prompt = category === 'Dog'
       ? 'この犬の画像を見て、犬種を特定してください。犬種名のみを日本語で回答してください。複数の可能性がある場合は最も可能性の高いものを1つだけ答えてください。'
@@ -383,6 +477,8 @@ Breedフィールドの下に識別中の表示を追加：
 
 ---
 
+**機能1の実装、お疲れ様でした！次は、ペットの健康相談ができるチャットボットを作りましょう。**
+
 ## 機能2: ヘルスケアアドバイザーチャットボット
 
 ### 概要
@@ -419,7 +515,7 @@ export async function POST(request: NextRequest) {
 
     // Gemini API呼び出し
     const genAI = new GoogleGenerativeAI(apiKey)
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
     const systemPrompt = `あなたはペットの健康アドバイザーです。以下のペット情報を参考に、飼い主からの質問に親切に答えてください。
 
@@ -612,11 +708,19 @@ return文の最後に追加：
 
 ---
 
+**機能2も完成しました！最後は、画像生成AIを使った楽しい機能を実装しましょう。**
+
 ## 機能3: 子供イメージ画像生成
 
 ### 概要
 
 2匹のペットを選択して、その子供の姿をAIで生成します。
+
+**使用モデル**: Stable Diffusion XL Base 1.0
+- 高品質な1024x1024画像を生成
+- 2つのペットの特徴を組み合わせたプロンプトから画像を生成
+
+**⚠️ 注意**: 初回実行時はモデルの読み込みに20-30秒かかる場合があります。2回目以降はキャッシュされて高速になります。
 
 ### 3-1. APIルートの作成
 
@@ -648,9 +752,9 @@ export async function POST(request: NextRequest) {
     // プロンプト生成
     const prompt = `A cute baby ${parent1.category.toLowerCase()} that is a mix between a ${parent1.breed || parent1.category} and a ${parent2.breed || parent2.category}, adorable, fluffy, high quality, professional photo`
 
-    // Hugging Face Inference API呼び出し
+    // Hugging Face Inference API呼び出し（SDXL Base 1.0）
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1',
+      'https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',
       {
         method: 'POST',
         headers: {
@@ -660,8 +764,10 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           inputs: prompt,
           parameters: {
-            negative_prompt: 'ugly, deformed, low quality, blurry',
+            negative_prompt: 'ugly, deformed, low quality, blurry, distorted',
             num_inference_steps: 30,
+            width: 1024,
+            height: 1024,
           },
         }),
       }
@@ -923,7 +1029,15 @@ import { Sparkles } from "lucide-react"
 3. 「子供の画像を生成」をクリック
 4. 数秒〜数十秒後、生成された画像が表示される
 
-**注意**: 初回は Hugging Face のモデルが読み込まれるため、時間がかかる場合があります（20〜30秒程度）。
+**注意事項**:
+- **初回実行**: Stable Diffusion XLモデルの読み込みに20〜30秒かかります
+- **2回目以降**: モデルがキャッシュされるため、5〜10秒程度で生成されます
+- **画質**: 1024x1024の高解像度画像が生成されます（SD 2.1の512x512より高品質）
+- **タイムアウト**: 60秒以上かかる場合はエラーになります（稀）
+
+**トラブルシューティング**:
+- モデル読み込み中（503エラー）の場合: 20-30秒待ってから再試行
+- 画像が表示されない場合: ブラウザのコンソールでエラーを確認
 
 ---
 
@@ -937,8 +1051,11 @@ import { Sparkles } from "lucide-react"
 
 ### 使用したAPI
 
-- **Google Gemini API**: 画像認識、テキスト生成
-- **Hugging Face Inference API**: 画像生成
+- **Google Gemini API（Gemini 2.5 Flash）**: 画像認識、テキスト生成
+  - 犬種/猫種自動識別
+  - ヘルスケアチャットボット
+- **Hugging Face Inference API（Stable Diffusion XL Base 1.0）**: 画像生成
+  - 子供イメージ画像生成（1024x1024高解像度）
 
 ### 学んだこと
 
@@ -948,6 +1065,10 @@ import { Sparkles } from "lucide-react"
 - 画像生成AIの活用
 
 ---
+
+**3つのAI機能の実装、お疲れ様でした！🎉**
+
+ここまでで基本的なAI統合の流れを体験しました。次のセクションでは、さらに多くの無料AIサービスを紹介します。自由演習の時間に、興味のある機能を追加してみましょう。
 
 ## 他に試せる無料AI API
 
