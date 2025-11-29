@@ -680,7 +680,7 @@ npm run prisma:studio
 
 Once you've verified the base app works, we'll implement AI features:
 
-1. **Breed Auto-identification** (supports all pets: dogs, cats, birds, fish, etc.)
+1. **Breed Auto-identification**
 2. **Healthcare Advisor**
 3. **Image Generation**
 

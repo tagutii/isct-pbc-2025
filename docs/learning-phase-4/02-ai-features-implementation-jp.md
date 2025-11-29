@@ -54,8 +54,8 @@ Google Gemini APIには複数のモデルがありますが、本講義では**G
 - 📝 **長文対応**: 最大100万トークン（約75万語）
 
 **無料枠**:
-- 月15 RPM（Requests Per Minute）
-- 月1,500 RPD（Requests Per Day）
+- 15 RPM（Requests Per Minute）
+- 1,500 RPD（Requests Per Day）
 - 実質的に1日100リクエスト以上無料で使える
 
 **なぜ2.5 Flashを選ぶのか？**
@@ -77,7 +77,7 @@ Google Gemini APIには複数のモデルがありますが、本講義では**G
 
 #### 料金
 
-- **無料枠**: 月15 RPM（Gemini 2.5 Flash）
+- **無料枠**: 15 RPM（Gemini 2.5 Flash）
 - **有料プラン**: 従量課金制（詳細はGoogle AI Studioで確認）
 
 #### 本講義での用途

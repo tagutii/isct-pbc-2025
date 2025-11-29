@@ -54,8 +54,8 @@ Google Gemini API has multiple models, but we'll use **Gemini 2.5 Flash** for th
 - 📝 **Long Context**: Up to 1 million tokens (about 750,000 words)
 
 **Free Tier**:
-- 15 RPM (Requests Per Minute) per month
-- 1,500 RPD (Requests Per Day) per month
+- 15 RPM (Requests Per Minute) 
+- 1,500 RPD (Requests Per Day) 
 - Effectively over 100 requests per day for free
 
 **Why Choose 2.5 Flash?**
@@ -77,7 +77,7 @@ Google Gemini API has multiple models, but we'll use **Gemini 2.5 Flash** for th
 
 #### Pricing
 
-- **Free Tier**: 15 RPM per month (Gemini 2.5 Flash)
+- **Free Tier**: 15 RPM  (Gemini 2.5 Flash)
 - **Paid Plan**: Pay-as-you-go (check Google AI Studio for details)
 
 #### Use Cases in This Lecture
