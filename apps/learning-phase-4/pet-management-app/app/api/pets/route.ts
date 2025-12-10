@@ -1,5 +1,34 @@
+import { prisma } from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
+
+// GET /api/pets - Get all pets for the current user
+export async function GET(request: NextRequest) {
+  try {
+    const userId = request.headers.get("x-user-id");
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const pets = await prisma.pet.findMany({
+      where: {
+        ownerId: userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json({ pets });
+  } catch (error) {
+    console.error("Get pets error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
