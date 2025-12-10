@@ -1,77 +1,59 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextRequest, NextResponse } from "next/server";
 
-// GET /api/pets - Get all pets for the current user
-export async function GET(request: NextRequest) {
-  try {
-    const userId = request.headers.get('x-user-id')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
-
-    const pets = await prisma.pet.findMany({
-      where: {
-        ownerId: userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
-
-    return NextResponse.json({ pets })
-  } catch (error) {
-    console.error('Get pets error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
-
-// POST /api/pets - Create a new pet
 export async function POST(request: NextRequest) {
   try {
-    const userId = request.headers.get('x-user-id')
+    const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
 
-    if (!userId) {
+    if (!apiKey) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+        { error: "API key not configured" },
+        { status: 500 }
+      );
     }
 
-    const body = await request.json()
-    const { name, category, breed, birthday, gender, imageUrl } = body
+    const formData = await request.formData();
+    const file = formData.get("file") as File;
+    const category = formData.get("category") as string;
 
-    if (!name || !category) {
-      return NextResponse.json(
-        { error: 'Name and category are required' },
-        { status: 400 }
-      )
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const pet = await prisma.pet.create({
-      data: {
-        ownerId: userId,
-        name,
-        category,
-        breed,
-        birthday: birthday ? new Date(birthday) : null,
-        gender,
-        imageUrl,
+    // ファイルをBase64に変換
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    const base64Image = buffer.toString("base64");
+
+    // Gemini API呼び出し
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt =
+      category === "Dog"
+        ? "この犬の画像を見て、犬種を特定してください。犬種名のみを日本語で回答してください。複数の可能性がある場合は最も可能性の高いものを1つだけ答えてください。"
+        : category === "Cat"
+          ? "この猫の画像を見て、猫種を特定してください。猫種名のみを日本語で回答してください。複数の可能性がある場合は最も可能性の高いものを1つだけ答えてください。"
+          : "この動物の種類を特定してください。種類名のみを日本語で回答してください。";
+
+    const result = await model.generateContent([
+      {
+        inlineData: {
+          mimeType: file.type,
+          data: base64Image,
+        },
       },
-    })
+      prompt,
+    ]);
 
-    return NextResponse.json({ pet }, { status: 201 })
+    const breed = result.response.text().trim();
+
+    return NextResponse.json({ breed });
   } catch (error) {
-    console.error('Create pet error:', error)
+    console.error("Identify error:", error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: "Failed to identify breed" },
       { status: 500 }
-    )
+    );
   }
 }

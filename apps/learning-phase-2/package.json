@@ -10,7 +10,8 @@
     "audit": "npm audit",
     "audit:fix": "npm audit fix",
     "outdated": "npm outdated",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.18.0",
@@ -21,6 +22,7 @@
     "next": "^14.2.33",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "recharts": "^3.5.1",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7"
   },
